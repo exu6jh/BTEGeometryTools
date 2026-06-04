@@ -1,0 +1,28 @@
+import argparse
+from linetool import LineTool
+#from rooftool import RoofTool
+
+def main():
+    parser = argparse.ArgumentParser(prog='geometrytool.py')
+    parser.add_argument('tool', type=str, help="Geometry tool to use (line or roof).")
+    parser.add_argument('--input', '-i', type=str, help="input file (optional, you can also manually enter information)")
+    parser.add_argument('--output', '-o', type=str, nargs='?', default='output', help="output file (optional)")
+    parser.add_argument('--verbose', '-v', action='store_true', help='verbose mode - print extra information when running subtools?')
+    args = parser.parse_args()
+
+    tool = args.tool.strip().lower()
+    inp = args.input
+    out = args.output
+    verbose = args.verbose
+    if tool == 'line':
+        lt = LineTool()
+        lt(inp, out=out, verbose=verbose)
+    elif tool == 'roof':
+        print("Roof tool still in development.")
+        #rt = RoofTool()
+        #rt(inp)
+    else:
+        print(f"Unrecognized tool {tool}.")
+
+if __name__ == "__main__":
+    main()
