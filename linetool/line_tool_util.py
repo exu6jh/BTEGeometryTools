@@ -1,4 +1,5 @@
-import json, numpy, zipfile
+import json, zipfile
+import numpy
 from fastkml import find_all, kml, LineString
 from terrapyconvert import from_geo
 
