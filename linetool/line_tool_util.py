@@ -27,6 +27,30 @@ def read_geojson_lines(file, print_contents=False):
             print()
     return lines
 
+# Read KML using fastkml
+def read_kml_lines(file, print_contents=False):
+    lines = []
+    with open(file, 'rb') as f:
+        kml_doc = f.read()
+        k = kml.KML.from_string(kml_doc)
+        k_lines = list(find_all(k, of_type=LineString))
+        if print_contents:
+            print("Lines translated into Minecraft coordinates:")
+        for line in k_lines:
+            k_coords = line.kml_coordinates.coords
+            prev_point = None
+            for point in k_coords:
+                point = from_geo(point[1], point[0])
+                if prev_point:
+                    conv_line = [prev_point, point]
+                    lines.append(conv_line)
+                    if print_contents:
+                        print_line(conv_line)
+                prev_point = point
+        if print_contents:
+            print()
+    return lines
+
 # Read KMZ using ZIP extraction and fastkml
 def read_kmz_lines(file, print_contents=False):
     lines = []

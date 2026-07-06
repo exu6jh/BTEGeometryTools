@@ -1,7 +1,7 @@
 import argparse, itertools, os, sys
 import mcschematic, numpy
 from utils.geom_utils import process_coords
-from .line_tool_util import arr_grid, block_type_to_block_info, construct_line, print_line, read_geojson_lines, read_kmz_lines
+from .line_tool_util import arr_grid, block_type_to_block_info, construct_line, print_line, read_geojson_lines, read_kml_lines, read_kmz_lines
 from pathlib import Path
 from PIL import Image
 from terrapyconvert import from_geo
@@ -30,6 +30,10 @@ class LineTool:
                     print("Reading geojson file.")
                     with p.open() as f:
                         lines += read_geojson_lines(f, print_contents=verbose)
+                elif p.suffix == ".kml":
+                    print("Reading kml file.")
+                    fname = os.fspath(p)
+                    lines += read_kml_lines(fname, print_contents=verbose)
                 elif p.suffix == ".kmz":
                     print("Reading kmz file.")
                     fname = os.fspath(p)
@@ -110,8 +114,8 @@ class LineTool:
             schem_point_offset = (x, z) - (base_point - [min_x, min_z])
             block_type = int(schem_array[x][z])
             schem.setBlock((schem_point_offset[0], -1, schem_point_offset[1]), block_type_to_block_info[block_type])
-        schem.save("output", out, mcschematic.Version.JE_1_21_5)
-        print(f"Saved schematic to output/{out}.schem. Upload schematic to server, load schematic, TP to {lines[0][0]}, and paste")
+        schem.save("output/linetool", out, mcschematic.Version.JE_1_21_5)
+        print(f"Saved schematic to output/linetool/{out}.schem. Upload schematic to server, load schematic, TP to {lines[0][0]}, and paste")
 
         # === For image ===
         print("\nConverting discretized points into image")
@@ -134,6 +138,6 @@ class LineTool:
         grid_arr = arr_grid(arr)
 
         print("Converting image array to image")
-        Image.fromarray(grid_arr.astype(numpy.uint8)).convert("RGB").save(f"output/{out}.png")
+        Image.fromarray(grid_arr.astype(numpy.uint8)).convert("RGB").save(f"output/linetool/{out}.png")
 
-        print(f"Saved image to output/{out}.png\n")
+        print(f"Saved image to output/linetool/{out}.png\n")
